@@ -25,10 +25,10 @@ RenderManAsset is the format used by the preset browser that was introduced in [
 
 ## Requirements
 
-This plugin will NOT work without the following software:
+This plugin requires the following software:
 
 * Substance Painter 2021.1+, Adobe Substance 3D Painter
-* RenderMan Pro Server 24.3+
+* RenderMan Pro Server 24.4+
 
 ## Install
 

@@ -63,8 +63,8 @@ import substance_painter.textureset as spts
 import substance_painter.export as spex
 
 
-__version__ = '24.3.0'
-MIN_RPS = '24.3'
+__version__ = '24.4.0'
+MIN_RPS = '24.4'
 MIN_SP_API = '0.1.0'
 OCIO_CONFIGS = [
     'Off',
@@ -842,10 +842,23 @@ def env_check(prefs):
 
     LOG.info('RMANTREE = %r', rmantree)
     os.environ['RMANTREE'] = rmantree
+    python_ver = '%s.%s' % (sys.version[0], sys.version[2])
     if platform.system() == 'Windows':
-        rmp_path = os.path.join(rmantree, 'lib', 'python3.7', 'Lib', 'site-packages')
+        rmp_path = os.path.join(rmantree, 'lib', 'python%s' % python_ver, 'Lib', 'site-packages')
     else:
-        rmp_path = os.path.join(rmantree, 'lib', 'python3.7', 'site-packages')
+        rmp_path = os.path.join(rmantree, 'lib', 'python%s' % python_ver, 'site-packages')
+
+    if not os.path.exists(rmp_path):
+        LOG.warning('Cannot find python modules directory: %r', rmp_path)
+        ret = msg_box(
+            'Cannot find RenderMan python modues directory!',
+            '(%s).' % rmp_path,
+            QMessageBox.Abort | QMessageBox.Retry, QMessageBox.Retry)
+        if ret == QMessageBox.Retry:
+            return env_check(prefs)
+        else:
+            raise RuntimeError('Cannot find python modules directory: %s', rmp_path)        
+
     if rmp_path not in sys.path:
         sys.path.append(rmp_path)
     rmu_path = os.path.join(rmantree, 'bin')

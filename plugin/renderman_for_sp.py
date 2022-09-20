@@ -920,7 +920,7 @@ def print_dict(some_dict, msg=''):
 
 
 def app(name):
-    if os.name is 'nt':
+    if os.name == 'nt':
         return name + '.exe'
     return name
 
@@ -934,7 +934,7 @@ def startup_info():
                                   Windows, otherwise None
     """
     startupinfo = None
-    if os.name is 'nt':
+    if os.name == 'nt':
         startupinfo = subprocess.STARTUPINFO()
         startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
     return startupinfo

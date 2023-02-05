@@ -353,6 +353,9 @@ class RenderManForSP(object):
                     # all texture sets who have a selected checkbox
                     tset_list = [matPair[1] for matPair in self.opt_tsets if matPair[0].checkState()] 
 
+                    if (len(tset_list) <= 0):
+                        LOG.info('RenderMan : No texture sets selected')
+                        return True
                     # build assets
                     for mat in tset_list:
                         if self.spx_progress.wasCanceled():
@@ -657,7 +660,7 @@ class RenderManForSP(object):
                         mat_check.setChecked(True)
                         self.opt_tsets.append((mat_check, mat))
                         mat_lyt.addWidget(mat_check)
-                    checkBoxNone = QPushButton("Select None")
+                    checkBoxNone = QPushButton("Deselect All")
                     checkBoxNone.clicked.connect(self.deselctAllMaterials)
                     mat_lyt.addWidget(checkBoxNone, 0, 0)
                     checkBoxAll = QPushButton("Select All")
@@ -738,8 +741,9 @@ class RenderManForSP(object):
                         config['exportParameters'][0]['parameters']['sizeLog2'] = self.res_override
                     # make sure each texture set only exports existing channels.
                     config['exportList'] = []
+                    tset_list = [matPair[1] for matPair in self.opt_tsets if matPair[0].checkState()] 
                     # find all requested channels
-                    for tset in spts.all_texture_sets():
+                    for tset in tset_list:
                         channels = set()
                         tset_settings = {'rootPath': tset.name(),
                                          'filter': {'outputMaps': []}}

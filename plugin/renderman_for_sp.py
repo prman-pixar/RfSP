@@ -50,8 +50,12 @@ from PySide2.QtWidgets import (
     QMessageBox,
     QFileDialog,
     QFormLayout,
+    QGridLayout,
     QComboBox,
     QGroupBox,
+    QPushButton,
+    QCheckBox,
+    QScrollArea,
     QProgressDialog,
     QApplication
     )
@@ -269,6 +273,7 @@ class RenderManForSP(object):
                     self.opt_bxdf = None
                     self.opt_ocio = None
                     self.opt_resolution = None
+                    self.opt_tsets = []
                     self.res_override = None
                     self._defaultLabel = 'UNTITLED'
                     self.ocio_config = {'config': None, 'path': None,
@@ -345,7 +350,8 @@ class RenderManForSP(object):
                     QApplication.processEvents()
 
                     # list of spts.TextureSet objects
-                    tset_list = spts.all_texture_sets()
+                    # all texture sets who have a selected checkbox
+                    tset_list = [matPair[1] for matPair in self.opt_tsets if matPair[0].checkState()] 
 
                     # build assets
                     for mat in tset_list:
@@ -638,6 +644,29 @@ class RenderManForSP(object):
                     self.opt_resolution.addItems(
                         ['Project settings'] + [str(2**x) for x in range(7, 14)])
                     lyt.addRow('Texture Resolution :', self.opt_resolution)
+                    # texture sets to export
+                    mat_grp = QGroupBox()
+                    mat_grp.setCheckable(False)
+                    mat_lyt = QGridLayout()
+                    mat_grp.setLayout(mat_lyt)
+                    mat_lyt.setSpacing(5)
+                    tsets = spts.all_texture_sets()
+                    self.opt_tsets = []
+                    for mat in tsets:
+                        mat_check = QCheckBox(mat.name())
+                        mat_check.setChecked(True)
+                        self.opt_tsets.append((mat_check, mat))
+                        mat_lyt.addWidget(mat_check)
+                    checkBoxNone = QPushButton("Select None")
+                    checkBoxNone.clicked.connect(self.deselctAllMaterials)
+                    mat_lyt.addWidget(checkBoxNone, 0, 0)
+                    checkBoxAll = QPushButton("Select All")
+                    checkBoxAll.clicked.connect(self.selectAllMaterials)
+                    mat_lyt.addWidget(checkBoxAll, 0, 1)
+                    mat_scroll = QScrollArea()
+                    mat_scroll.setWidget(mat_grp)
+                    mat_scroll.setWidgetResizable(True)
+                    lyt.addRow('Texture Sets: ', mat_scroll)
                     # add to parent layout
                     top_layout.addWidget(grp)
                     # set last used bxdf, ocio config and bump roughness
@@ -651,6 +680,13 @@ class RenderManForSP(object):
                     if last_res:
                         self.opt_resolution.setCurrentText(last_res)
 
+                def selectAllMaterials(self):
+                        for matPair in self.opt_tsets:
+                            matPair[0].setChecked(True)
+                def deselctAllMaterials(self):
+                        for matPair in self.opt_tsets:
+                            matPair[0].setChecked(False)
+                            
                 def _load_rules(self):
                     fpath = FilePath(root_dir()).join('renderman_rules.json')
                     if fpath.exists():

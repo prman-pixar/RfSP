@@ -317,6 +317,15 @@ class RenderManForSP(object):
                         'exportMaterial: %r, %r, %r', categorypath, infodict,
                         previewtype)
                     # get specific Substance painter options
+
+                    # list of spts.TextureSet objects
+                    # all texture sets who have a selected checkbox
+                    tset_list = [matPair[1] for matPair in self.opt_tsets if matPair[0].checkState()] 
+
+                    if (len(tset_list) <= 0):
+                        LOG.info('RenderMan : No texture sets selected')
+                        return False
+                    
                     # exported bxdf
                     _preset = self.opt_bxdf.currentText()
                     self.prefsobj.set('last preset', _preset)
@@ -349,13 +358,6 @@ class RenderManForSP(object):
                     self.spx_progress.setAutoClose(True)
                     QApplication.processEvents()
 
-                    # list of spts.TextureSet objects
-                    # all texture sets who have a selected checkbox
-                    tset_list = [matPair[1] for matPair in self.opt_tsets if matPair[0].checkState()] 
-
-                    if (len(tset_list) <= 0):
-                        LOG.info('RenderMan : No texture sets selected')
-                        return True
                     # build assets
                     for mat in tset_list:
                         if self.spx_progress.wasCanceled():

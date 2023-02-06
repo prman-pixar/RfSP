@@ -650,24 +650,24 @@ class RenderManForSP(object):
                         ['Project settings'] + [str(2**x) for x in range(7, 14)])
                     lyt.addRow('Texture Resolution :', self.opt_resolution)
                     # texture sets to export
-                    mat_grp = QGroupBox()
-                    mat_grp.setCheckable(False)
+                    mat_grp = QWidget()
                     mat_lyt = QGridLayout()
                     mat_grp.setLayout(mat_lyt)
                     mat_lyt.setSpacing(5)
                     tsets = spts.all_texture_sets()
-                    self.opt_tsets = []
-                    for mat in tsets:
-                        mat_check = QCheckBox(mat.name())
-                        mat_check.setChecked(True)
-                        self.opt_tsets.append((mat_check, mat))
-                        mat_lyt.addWidget(mat_check)
+                    
                     checkBoxNone = QPushButton("Deselect All")
                     checkBoxNone.clicked.connect(self.deselctAllMaterials)
                     mat_lyt.addWidget(checkBoxNone, 0, 0)
                     checkBoxAll = QPushButton("Select All")
                     checkBoxAll.clicked.connect(self.selectAllMaterials)
                     mat_lyt.addWidget(checkBoxAll, 0, 1)
+                    self.opt_tsets = []
+                    for (i, mat) in enumerate(tsets):
+                        mat_check = QCheckBox(mat.name())
+                        mat_check.setChecked(True)
+                        self.opt_tsets.append((mat_check, mat))
+                        mat_lyt.addWidget(mat_check, i+1, 0, 1, 2)
                     mat_scroll = QScrollArea()
                     mat_scroll.setWidget(mat_grp)
                     mat_scroll.setWidgetResizable(True)

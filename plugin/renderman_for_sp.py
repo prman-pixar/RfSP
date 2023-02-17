@@ -50,8 +50,12 @@ from PySide2.QtWidgets import (
     QMessageBox,
     QFileDialog,
     QFormLayout,
+    QGridLayout,
     QComboBox,
     QGroupBox,
+    QPushButton,
+    QCheckBox,
+    QScrollArea,
     QProgressDialog,
     QApplication
     )
@@ -269,6 +273,7 @@ class RenderManForSP(object):
                     self.opt_bxdf = None
                     self.opt_ocio = None
                     self.opt_resolution = None
+                    self.opt_tsets = []
                     self.res_override = None
                     self._defaultLabel = 'UNTITLED'
                     self.ocio_config = {'config': None, 'path': None,
@@ -312,6 +317,15 @@ class RenderManForSP(object):
                         'exportMaterial: %r, %r, %r', categorypath, infodict,
                         previewtype)
                     # get specific Substance painter options
+
+                    # list of spts.TextureSet objects
+                    # all texture sets who have a selected checkbox
+                    tset_list = [matPair[1] for matPair in self.opt_tsets if matPair[0].checkState()] 
+
+                    if (len(tset_list) <= 0):
+                        LOG.info('RenderMan : No texture sets selected')
+                        return False
+                    
                     # exported bxdf
                     _preset = self.opt_bxdf.currentText()
                     self.prefsobj.set('last preset', _preset)
@@ -343,9 +357,6 @@ class RenderManForSP(object):
                     self.spx_progress.setMinimumDuration(1)
                     self.spx_progress.setAutoClose(True)
                     QApplication.processEvents()
-
-                    # list of spts.TextureSet objects
-                    tset_list = spts.all_texture_sets()
 
                     # build assets
                     for mat in tset_list:
@@ -638,6 +649,29 @@ class RenderManForSP(object):
                     self.opt_resolution.addItems(
                         ['Project settings'] + [str(2**x) for x in range(7, 14)])
                     lyt.addRow('Texture Resolution :', self.opt_resolution)
+                    # texture sets to export
+                    mat_grp = QWidget()
+                    mat_lyt = QGridLayout()
+                    mat_grp.setLayout(mat_lyt)
+                    mat_lyt.setSpacing(5)
+                    tsets = spts.all_texture_sets()
+                    
+                    checkBoxNone = QPushButton("Deselect All")
+                    checkBoxNone.clicked.connect(self.deselctAllMaterials)
+                    mat_lyt.addWidget(checkBoxNone, 0, 0)
+                    checkBoxAll = QPushButton("Select All")
+                    checkBoxAll.clicked.connect(self.selectAllMaterials)
+                    mat_lyt.addWidget(checkBoxAll, 0, 1)
+                    self.opt_tsets = []
+                    for (i, mat) in enumerate(tsets):
+                        mat_check = QCheckBox(mat.name())
+                        mat_check.setChecked(True)
+                        self.opt_tsets.append((mat_check, mat))
+                        mat_lyt.addWidget(mat_check, i+1, 0, 1, 2)
+                    mat_scroll = QScrollArea()
+                    mat_scroll.setWidget(mat_grp)
+                    mat_scroll.setWidgetResizable(True)
+                    lyt.addRow('Texture Sets: ', mat_scroll)
                     # add to parent layout
                     top_layout.addWidget(grp)
                     # set last used bxdf, ocio config and bump roughness
@@ -651,6 +685,13 @@ class RenderManForSP(object):
                     if last_res:
                         self.opt_resolution.setCurrentText(last_res)
 
+                def selectAllMaterials(self):
+                        for matPair in self.opt_tsets:
+                            matPair[0].setChecked(True)
+                def deselctAllMaterials(self):
+                        for matPair in self.opt_tsets:
+                            matPair[0].setChecked(False)
+                            
                 def _load_rules(self):
                     fpath = FilePath(root_dir()).join('renderman_rules.json')
                     if fpath.exists():
@@ -702,8 +743,9 @@ class RenderManForSP(object):
                         config['exportParameters'][0]['parameters']['sizeLog2'] = self.res_override
                     # make sure each texture set only exports existing channels.
                     config['exportList'] = []
+                    tset_list = [matPair[1] for matPair in self.opt_tsets if matPair[0].checkState()] 
                     # find all requested channels
-                    for tset in spts.all_texture_sets():
+                    for tset in tset_list:
                         channels = set()
                         tset_settings = {'rootPath': tset.name(),
                                          'filter': {'outputMaps': []}}

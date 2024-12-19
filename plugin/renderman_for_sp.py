@@ -43,9 +43,9 @@ import re
 import subprocess
 import copy
 from math import log2
-from PySide2.QtCore import (QResource, Qt)
-from PySide2.QtGui import (QIcon)
-from PySide2.QtWidgets import (
+from PySide6.QtCore import (QResource, Qt)
+from PySide6.QtGui import (QIcon)
+from PySide6.QtWidgets import (
     QWidget,
     QMessageBox,
     QFileDialog,
@@ -67,9 +67,9 @@ import substance_painter.textureset as spts
 import substance_painter.export as spex
 
 
-__version__ = '24.4.0'
-MIN_RPS = '24.4'
-MIN_SP_API = '0.1.0'
+__version__ = '26.3.0'
+MIN_RPS = '26.3'
+MIN_SP_API = '0.3.0'
 OCIO_CONFIGS = [
     'Off',
     'ACES-1.2',
@@ -884,7 +884,7 @@ def env_check(prefs):
 
     LOG.info('RMANTREE = %r', rmantree)
     os.environ['RMANTREE'] = rmantree
-    python_ver = '%s.%s' % (sys.version[0], sys.version[2])
+    python_ver = '%s.%s' % (sys.version_info.major, sys.version_info.minor)
     if platform.system() == 'Windows':
         rmp_path = os.path.join(rmantree, 'lib', 'python%s' % python_ver, 'Lib', 'site-packages')
     else:

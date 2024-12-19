@@ -1,6 +1,6 @@
 # RfSP
 
-## RenderMan for Substance Painter 24.4
+## RenderMan for Substance Painter 26.3
 
 This plugin exports your [Substance Painter](https://www.allegorithmic.com/products/substance-painter) project as one or more RenderManAsset.
 
@@ -27,15 +27,15 @@ RenderManAsset is the format used by the preset browser that was introduced in [
 
 This plugin requires the following software:
 
-* Substance Painter 2021.1+, Adobe Substance 3D Painter
-* RenderMan Pro Server 24.4+
+* Adobe Substance 3D Painter 10.1
+* RenderMan Pro Server 26.3+
 
 ## Install
 
 * Download a zip archive from the github page
 * Un-zip the archive
 * Copy the 3 files inside the "plugin" folder directly in Substance Painter's python/plugins folder (do not copy the "plugin" folder in python/plugins).
-  > OSX: `/Users/yourlogin/Documents/Substance Painter 2/python/plugins`
+  > OSX: `/Users/yourlogin/Adobe/Adobe Substance 3D Painter/python/plugins/`
 
 ## Known Issues
 

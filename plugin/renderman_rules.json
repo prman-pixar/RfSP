@@ -232,7 +232,7 @@
                         },
                         "dst": {
                             "node": "_diffuse",
-                            "param": "normal",
+                            "param": "diffuseNormal",
                             "type": "normal"
                         }
                     },
@@ -243,7 +243,7 @@
                         },
                         "dst": {
                             "node": "_specular",
-                            "param": "normal",
+                            "param": "conductorNormal",
                             "type": "normal"
                         }
                     },
@@ -254,7 +254,7 @@
                         },
                         "dst": {
                             "node": "_diffuse",
-                            "param": "color",
+                            "param": "diffuseColor",
                             "type": "color"
                         }
                     },

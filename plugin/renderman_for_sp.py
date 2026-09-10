@@ -320,7 +320,7 @@ class RenderManForSP(object):
 
                     # list of spts.TextureSet objects
                     # all texture sets who have a selected checkbox
-                    tset_list = [matPair[1] for matPair in self.opt_tsets if matPair[0].checkState()] 
+                    tset_list = [matPair[1] for matPair in self.opt_tsets if matPair[0].isChecked()] 
 
                     if (len(tset_list) <= 0):
                         LOG.info('RenderMan : No texture sets selected')
@@ -743,7 +743,7 @@ class RenderManForSP(object):
                         config['exportParameters'][0]['parameters']['sizeLog2'] = self.res_override
                     # make sure each texture set only exports existing channels.
                     config['exportList'] = []
-                    tset_list = [matPair[1] for matPair in self.opt_tsets if matPair[0].checkState()] 
+                    tset_list = [matPair[1] for matPair in self.opt_tsets if matPair[0].isChecked()] 
                     # find all requested channels
                     for tset in tset_list:
                         channels = set()
